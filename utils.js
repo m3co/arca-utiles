@@ -168,6 +168,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
 
   function clear() {
     storage.length = 0;
+    render();
   }
 
   var lastSTO;
@@ -214,7 +215,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
   var newEntry = (() => {
     var row = Object.assign({}, defaultRow);
     row[Symbol.for('defaultrow')] = defaultRow;
-    return [row];
+    return row
   })();
 
   setTimeout(() => {
@@ -226,7 +227,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     // NEW-ENTRY
     tb = d3.select(`table#${module} tbody`)
       .selectAll('tr.new-row')
-      .data(newEntry);
+      .data([newEntry]);
 
     tr = tb.enter().append('tr').classed('new-row', true);
     setupRedacts(module, idkey, fields, tr, 'insert');
@@ -273,7 +274,8 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     doupdate: doupdate,
     dodelete: dodelete,
     doinsert: doinsert,
-    clear: clear
+    clear: clear,
+    newEntry: newEntry
   };
 }
 
