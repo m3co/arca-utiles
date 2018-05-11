@@ -165,6 +165,11 @@ function setupRedacts(module, idkey, fields, tr, query='update') {
 
 function setupTable(module, header, actions, fields, idkey, validations, defaultRow={}) {
   var storage = [];
+
+  function clear() {
+    storage.length = 0;
+  }
+
   var lastSTO;
   function bounceRender() {
     if (lastSTO !== undefined) {
@@ -267,7 +272,8 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     doselect: doselect,
     doupdate: doupdate,
     dodelete: dodelete,
-    doinsert: doinsert
+    doinsert: doinsert,
+    clear: clear
   };
 }
 
