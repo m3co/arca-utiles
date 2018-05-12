@@ -166,8 +166,9 @@ function setupRedacts(module, idkey, fields, tr, query='update') {
 function setupTable(module, header, actions, fields, idkey, validations, defaultRow={}) {
   var storage = [];
 
-  function clear() {
+  function clear(entry) {
     storage.length = 0;
+    Object.assign(newEntry, entry);
     render();
   }
 
@@ -274,8 +275,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     doupdate: doupdate,
     dodelete: dodelete,
     doinsert: doinsert,
-    clear: clear,
-    newEntry: newEntry
+    clear: clear
   };
 }
 
