@@ -245,14 +245,14 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     trs.exit().remove();
 
     // UPDATE
-    trs.select('span')
+    trs.selectAll('span')
       .text((d, i, m) => renderText(d[m[i].getAttribute('key')]));
-    trs.select('input[name="value"]')
+    trs.selectAll('input[name="value"]')
       .attr('value', (d, i, m) => d[m[i].getAttribute('key')])
       .on('blur', defineBlurHandler);
-    trs.select('input[name="id"]')
+    trs.selectAll('input[name="id"]')
       .attr('value', (d, i, m) => d[m[i].getAttribute('idkey')]);
-    trs.select('form')
+    trs.selectAll('form')
       .on('submit', defineSubmitHandler.bind(null, validations));
 
     actions.forEach(action =>
