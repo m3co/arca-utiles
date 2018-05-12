@@ -61,7 +61,8 @@ function defineSubmitHandler(validations, row, i, m) {
   }
 
   if (fd.query == 'update') {
-    var keys = Object.keys(row).filter(d => !excludeFields.includes(d));
+    var keys = Object.keys(row)
+      .filter(d => !excludeFields.includes(d) && row[d]);
     client.emit('data', {
       id: fd.id,
       idkey: fd.idkey,
