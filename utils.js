@@ -183,7 +183,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
   }
 
   function doupdate(row) {
-    var found = storage.find(d => d.id == row.id);
+    var found = storage.find(d => d[idkey] == row[idkey]);
     if (found) {
       Object.keys(found).forEach(key => {
         found[key] = row[key];
@@ -193,7 +193,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
   }
 
   function doselect(row) {
-    var found = storage.find(d => d.id == row.id);
+    var found = storage.find(d => d[idkey] == row[idkey]);
     if (!found) {
       storage.push(row);
       bounceRender();
@@ -205,7 +205,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
   }
 
   function dodelete(row) {
-    var foundIndex = storage.findIndex(d => d.id == row.id);
+    var foundIndex = storage.findIndex(d => d[idkey] == row[idkey]);
     if (foundIndex > -1) {
       storage.splice(foundIndex, 1);
       bounceRender();
