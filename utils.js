@@ -246,18 +246,19 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     trs.exit().remove();
 
     // UPDATE
-    trs.selectAll('span')
-      .text((d, i, m) => renderText(d[m[i].getAttribute('key')]));
-    trs.selectAll('input[name="value"]')
-      .attr('value', (d, i, m) => d[m[i].getAttribute('key')])
-      .on('blur', defineBlurHandler);
-    trs.selectAll('input[name="id"]')
-      .attr('value', (d, i, m) => d[m[i].getAttribute('idkey')]);
-    trs.selectAll('form')
-      .on('submit', defineSubmitHandler.bind(null, validations));
-
-    actions.forEach(action =>
-      trs.select(action.select).call(action.setup));
+    trs.each((d, i, m) => {
+      d3.select(m[i]).selectAll('span').text((c, j, n) =>
+        renderText(d[n[j].getAttribute('key')]));
+      d3.select(m[i]).selectAll('input[name="value"]')
+        .attr('value', (c, j, n) => d[m[i].getAttribute('key')])
+        .on('blur', defineBlurHandler);
+      d3.select(m[i]).selectAll('input[name="id"]')
+        .attr('value', (c, j, n) => d[m[i].getAttribute('idkey')]);
+      d3.select(m[i]).selectAll('form')
+        .on('submit', defineSubmitHandler.bind(null, validations));
+      actions.forEach(action =>
+        d3.select(m[i]).select(action.select).call(action.setup));
+    });
 
     // ENTER
     tr = trs.enter().append('tr').classed('row', true);
