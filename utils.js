@@ -173,6 +173,7 @@ function setupTable(config) {
   var validations = config.validations;
   var defaultRow = config.defaultRow || {};
   var extraRows = config.extraRows || [];
+  var filter = config.filter || '';
 
   var storage = [];
 
@@ -231,12 +232,12 @@ function setupTable(config) {
 
   setTimeout(() => {
     var tb, tr;
-    d3.select(`table#${module} thead tr`)
+    d3.select(`table#${module}${filter} thead tr`)
       .selectAll('th').data(header)
       .enter().append('th').text(d => d);
 
     // NEW-ENTRY
-    tb = d3.select(`table#${module} tbody`)
+    tb = d3.select(`table#${module}${filter} tbody`)
       .selectAll('tr.new-row')
       .data([newEntry]);
 
@@ -248,7 +249,7 @@ function setupTable(config) {
     var trs, tr;
 
     // SELECT
-    trs = d3.selectAll(`table#${module} tbody`)
+    trs = d3.selectAll(`table#${module}${filter} tbody`)
       .selectAll('tr.row').data(storage);
 
     // EXIT
@@ -280,7 +281,7 @@ function setupTable(config) {
     extraRows.forEach(extraRow => tr.each(extraRow.enter));
 
     // MOVE NEW-ENTRY TO THE BOTTOM
-    d3.select(`table#${module} tbody tr.new-row`).each(function() {
+    d3.select(`table#${module}${filter} tbody tr.new-row`).each(function() {
       this.parentElement.appendChild(this);
     });
   }
