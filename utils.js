@@ -250,10 +250,10 @@ function setupTable(module, header, actions, fields, idkey, validations, default
       d3.select(m[i]).selectAll('span').text((c, j, n) =>
         renderText(d[n[j].getAttribute('key')]));
       d3.select(m[i]).selectAll('input[name="value"]')
-        .attr('value', (c, j, n) => d[m[i].getAttribute('key')])
+        .attr('value', (c, j, n) => d[n[j].getAttribute('key')])
         .on('blur', defineBlurHandler);
       d3.select(m[i]).selectAll('input[name="id"]')
-        .attr('value', (c, j, n) => d[m[i].getAttribute('idkey')]);
+        .attr('value', (c, j, n) => d[n[j].getAttribute('idkey')]);
       d3.select(m[i]).selectAll('form')
         .on('submit', defineSubmitHandler.bind(null, validations));
       actions.forEach(action =>
