@@ -239,13 +239,12 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     var trs, tr;
 
     // SELECT
-    trs = d3.select(`table#${module} tbody`)
+    trs = d3.selectAll(`table#${module} tbody`)
       .selectAll('tr.row').data(storage);
 
     // EXIT
     tr = trs.exit();
-    extraRows.forEach(extraRow =>
-      tr.each(extraRow.exit));
+    extraRows.forEach(extraRow => tr.each(extraRow.exit));
     tr.remove();
 
     // UPDATE
@@ -261,8 +260,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
         .on('submit', defineSubmitHandler.bind(null, validations));
       actions.forEach(action =>
         d3.select(m[i]).select(action.select).call(action.setup));
-      extraRows.forEach(extraRow =>
-        d3.select(m[i]).each(extraRow.update));
+      extraRows.forEach(extraRow => d3.select(m[i]).each(extraRow.update));
     });
 
     // ENTER
@@ -270,8 +268,7 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     setupRedacts(module, idkey, fields, tr);
     actions.forEach(action =>
       tr.append('td').append('button').call(action.setup));
-    extraRows.forEach(extraRow =>
-      tr.each(extraRow.enter));
+    extraRows.forEach(extraRow => tr.each(extraRow.enter));
 
     // MOVE NEW-ENTRY TO THE BOTTOM
     d3.select(`table#${module} tbody tr.new-row`).each(function() {
