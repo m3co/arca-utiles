@@ -164,7 +164,16 @@ function setupRedacts(module, idkey, fields, tr, query='update') {
   });
 }
 
-function setupTable(module, header, actions, fields, idkey, validations, defaultRow={}, extraRows=[]) {
+function setupTable(config) {
+  var module = config.module;
+  var header = config.header;
+  var actions = config.actions;
+  var fields = config.fields;
+  var idkey = config.idkey;
+  var validations = config.validations;
+  var defaultRow = config.defaultRow || {};
+  var extraRows = config.extraRows || [];
+
   var storage = [];
 
   function clear(entry) {
