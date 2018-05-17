@@ -164,7 +164,7 @@ function setupRedacts(module, idkey, fields, tr, query='update') {
   });
 }
 
-function setupTable(module, header, actions, fields, idkey, validations, defaultRow={}) {
+function setupTable(module, header, actions, fields, idkey, validations, defaultRow={}, extraRows=[]) {
   var storage = [];
 
   function clear(entry) {
@@ -243,7 +243,10 @@ function setupTable(module, header, actions, fields, idkey, validations, default
       .selectAll('tr.row').data(storage);
 
     // EXIT
-    trs.exit().remove();
+    tr = trs.exit();
+    extraRows.forEach(extraRow =>
+      tr.each(extraRow.exit));
+    tr.remove();
 
     // UPDATE
     trs.each((d, i, m) => {
@@ -258,6 +261,8 @@ function setupTable(module, header, actions, fields, idkey, validations, default
         .on('submit', defineSubmitHandler.bind(null, validations));
       actions.forEach(action =>
         d3.select(m[i]).select(action.select).call(action.setup));
+      extraRows.forEach(extraRow =>
+        d3.select(m[i]).each(extraRow.update));
     });
 
     // ENTER
@@ -265,6 +270,8 @@ function setupTable(module, header, actions, fields, idkey, validations, default
     setupRedacts(module, idkey, fields, tr);
     actions.forEach(action =>
       tr.append('td').append('button').call(action.setup));
+    extraRows.forEach(extraRow =>
+      tr.each(extraRow.enter));
 
     // MOVE NEW-ENTRY TO THE BOTTOM
     d3.select(`table#${module} tbody tr.new-row`).each(function() {
