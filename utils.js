@@ -119,7 +119,7 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
 
     var valueinput;
     if (isBike && bike instanceof Object) {
-      valueinput = form.append('my-bike')
+      valueinput = form.append('combobox-bike')
         .each(function() {
           this.config = bike;
         })

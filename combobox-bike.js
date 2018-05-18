@@ -2,7 +2,7 @@
 (() => {
   var lastId = 0;
   var lastSTO;
-  class MyBike extends HTMLElement {
+  class ComboboxBikeHTMLelement extends HTMLElement {
     constructor() {
       super();
     }
@@ -82,6 +82,6 @@
       this.appendChild(df);
     }
   }
-  customElements.define("my-bike", MyBike);
+  customElements.define("combobox-bike", ComboboxBikeHTMLelement);
 
 })();
