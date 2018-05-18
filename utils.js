@@ -93,9 +93,11 @@ function defineSubmitHandler(validations, row, i, m) {
 function setupRedact(idkey, field, module, validations, query = 'update') {
   var key = field;
   var isBike = false;
+  var bike;
   if (field instanceof Object) {
     key = field.name;
-    isBike = !!field.isBike;
+    isBike = !!field.bike;
+    bike = field.bike;
   }
   return function redact(selection) {
     selection.append('span')
@@ -116,8 +118,12 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
       .on('submit', defineSubmitHandler.bind(null, validations));
 
     var valueinput;
-    if (isBike) {
-      valueinput = form.append('my-bike').select('input[master]');
+    if (isBike && bike instanceof Object) {
+      valueinput = form.append('my-bike')
+        .each(function() {
+          this.config = bike;
+        })
+        .select('input[master]');
     } else {
       valueinput = form.append('input');
     }
