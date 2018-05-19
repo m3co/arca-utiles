@@ -85,10 +85,10 @@ function defineSubmitHandler(validations, row, i, m) {
     Object.keys(defaultrow)
       .forEach(key => {
         row[key] = defaultrow[key];
-        tr.querySelector(`input[name="value"][key="${key}"]`)
-          .value = defaultrow[key];
-        tr.querySelector(`span[key="${key}"]`)
-          .text = defaultrow[key];
+        d3.select(tr).select(`input[name="value"][key="${key}"]`)
+          .attr('value', defaultrow[key]);
+        d3.select(tr).select(`span[key="${key}"]`)
+          .text(defaultrow[key]);
       });
   }
 }
