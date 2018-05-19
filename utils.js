@@ -97,14 +97,16 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
   var key = field;
   var isBike = false;
   var bike;
+  var show = field;
   if (field instanceof Object) {
     key = field.name;
     isBike = !!field.bike;
     bike = field.bike;
+    show = field.show || key;
   }
   return function redact(selection) {
     selection.append('span')
-      .text(d => renderText(d[key]))
+      .text(d => renderText(d[show]))
       .each(function() {
         if (isBike) {
           this._onblur = bike.onblur;
