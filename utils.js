@@ -197,7 +197,7 @@ function setupTable(config) {
   var validations = config.validations;
   var defaultRow = config.defaultRow || {};
   var extraRows = config.extraRows || [];
-  var filter = config.filter || '';
+  var filter = config.filter || {};
 
   var storage = [];
 
@@ -253,15 +253,19 @@ function setupTable(config) {
     row[Symbol.for('defaultrow')] = defaultRow;
     return row
   })();
+  var _filter = '';
+  if (filter.key) {
+    _filter = `[${filter.key.toLowerCase()}="${filter.value || ''}"]`;
+  }
 
   setTimeout(() => {
     var tb, tr;
-    d3.select(`table#${module}${filter} thead tr`)
+    d3.select(`table#${module}${_filter} thead tr`)
       .selectAll('th').data(header)
       .enter().append('th').text(d => d);
 
     // NEW-ENTRY
-    tb = d3.select(`table#${module}${filter} tbody`)
+    tb = d3.select(`table#${module}${_filter} tbody`)
       .selectAll('tr.new-row')
       .data([newEntry]);
 
@@ -273,8 +277,8 @@ function setupTable(config) {
     var trs, tr;
 
     // SELECT
-    trs = d3.selectAll(`table#${module}${filter} tbody`)
-      .selectAll('tr.row').data(storage);
+    trs = d3.selectAll(`table#${module}${_filter} tbody`)
+      .selectAll(`tr.row${_filter}`).data(storage);
 
     // EXIT
     tr = trs.exit();
@@ -299,6 +303,9 @@ function setupTable(config) {
 
     // ENTER
     tr = trs.enter().append('tr').classed('row', true);
+    if (filter.key) {
+      tr.attr(filter.key.toLowerCase(), filter.value);
+    }
     setupRedacts(module, idkey, fields, tr);
     actions.forEach(action =>
       tr.append('td').append('button').call(action.setup));
