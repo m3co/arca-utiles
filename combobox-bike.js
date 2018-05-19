@@ -8,11 +8,16 @@
     }
 
     _turnToViewer(e) {
+      this.viewer.preventDoSearch = true;
+      if (lastSTO) {
+        clearTimeout(lastSTO);
+      }
       this.master.type = 'text';
       var value = e.target.value;
       var found = [...this.master.list.options].find(option => option.value == value);
       if (found) {
         this.viewer.value = found.label;
+        this.viewer._value = found.value;
       } else {
         this.viewer.value = this.master.value;
       }
@@ -24,17 +29,24 @@
       this.viewer.type = 'hidden';
       this.master.type = 'text';
       var label = e.target.value;
-      var found = [...this.master.list.options].find(option => option.label == label);
+      var value = e.target._value;
+      var found = [...this.master.list.options].find(option => option.value == value);
       if (found) {
         this.master.value = found.value;
       } else {
-        this.master.value = this.viewer.value;
+        if (value) {
+          this.master.value = value;
+        }
       }
       this.master.focus();
       this.master.select();
     }
 
     _dosearch(e) {
+      if (this.viewer.preventDoSearch) {
+        this.viewer.preventDoSearch = false;
+        return;
+      }
       var client = this.config.client;
       if (!client) {
         return;
