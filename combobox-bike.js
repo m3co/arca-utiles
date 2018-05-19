@@ -16,6 +16,7 @@
       var value = e.target.value;
       var found = [...this.master.list.options].find(option => option.value == value);
       if (found) {
+        this.master._found = found;
         this.viewer.value = found.label;
         this.viewer._value = found.value;
       } else {
@@ -33,6 +34,7 @@
       var found = [...this.master.list.options].find(option => option.value == value);
       if (found) {
         this.master.value = found.value;
+        this.master._found = found;
       } else {
         if (value) {
           this.master.value = value;

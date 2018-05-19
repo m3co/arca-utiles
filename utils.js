@@ -13,6 +13,9 @@ function defineBlurHandler(row, i, m) {
 
   var span = input.closest('td').querySelector('span');
   d3.select(span).text(d => renderText(input.value));
+  if (span._onblur instanceof Function) {
+    span._onblur(row, input);
+  }
   form.hidden = true;
   span.hidden = false;
 }
@@ -102,6 +105,11 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
   return function redact(selection) {
     selection.append('span')
       .text(d => renderText(d[key]))
+      .each(function() {
+        if (isBike) {
+          this._onblur = bike.onblur;
+        }
+      })
       .attr('key', key)
       .on('click', d => {
         var e = d3.event;
