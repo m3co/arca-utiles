@@ -302,11 +302,6 @@ function setupTable(config) {
     actions.forEach(action =>
       tr.append('td').append('button').call(action.setup));
     extraRows.forEach(extraRow => tr.each(extraRow.enter));
-
-    // MOVE NEW-ENTRY TO THE BOTTOM
-    d3.select(`table#${module}${filter} tbody tr.new-row`).each(function() {
-      this.parentElement.appendChild(this);
-    });
   }
 
   return {
