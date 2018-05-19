@@ -113,6 +113,7 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
         }
       })
       .attr('key', key)
+      .attr('keyshow', show)
       .on('click', d => {
         var e = d3.event;
         var span = e.target;
@@ -283,7 +284,7 @@ function setupTable(config) {
     // UPDATE
     trs.each((d, i, m) => {
       d3.select(m[i]).selectAll('span').text((c, j, n) =>
-        renderText(d[n[j].getAttribute('key')]));
+        renderText(d[n[j].getAttribute('keyshow')]));
       d3.select(m[i]).selectAll('input[name="value"]')
         .attr('value', (c, j, n) => d[n[j].getAttribute('key')])
         .on('blur', defineBlurHandler);
