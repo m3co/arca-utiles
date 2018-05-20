@@ -90,13 +90,13 @@ class ImportAUSuppliesHTML extends HTMLElement {
     data.map(d => COLUMNS.reduce((acc, key) => {
       acc[key] = (key === 'cost' || key === 'qop') ? Number(d[key]) : d[key];
       return acc;
-    }, { APUId: this
-      .querySelector('#import-apu-form input[name="APU"]')
-      .value
-    })).map(d => ({
+    }, (() => {
+      var r = {}, k = this.getAttribute('a-uid');
+      r[k] = this.querySelector('#import-apu-form input[name="APU"]').value;
+      return r;
+    })())).map(d => ({
       query: 'insert',
-      module: 'importAPUSupplies',
-      from: 'importAPUSupplies',
+      module: this.getAttribute('module'),
       row: d
     })).forEach(event => {
       client.emit('data', event);
