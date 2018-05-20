@@ -25,6 +25,16 @@ class ImportAUSuppliesHTML extends HTMLElement {
   constructor() {
     super();
   }
+  setup(id) {
+    this.querySelector('#import-apu-form input[name="APU"]')
+      .value = id;
+    return this;
+  }
+  show() {
+    this.querySelector('#import-apu').style
+      .display = '';
+    return this;
+  }
   connectedCallback() {
     this.innerHTML = templateHTML;
 
