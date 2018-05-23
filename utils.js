@@ -198,6 +198,7 @@ function setupTable(config) {
   var defaultRow = config.defaultRow || {};
   var extraRows = config.extraRows || [];
   var filter = config.filter || {};
+  var preventNewEntry = config.preventNewEntry || false;
 
   var storage = [];
 
@@ -266,6 +267,7 @@ function setupTable(config) {
       .selectAll('th').data(header)
       .enter().append('th').text(d => d);
 
+    if (preventNewEntry) return;
     // NEW-ENTRY
     tb = d3.select(`table#${module}${_filter} tbody`)
       .selectAll('tr.new-row')
