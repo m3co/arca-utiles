@@ -95,12 +95,24 @@ function defineSubmitHandler(validations, row, i, m) {
 
 function setupRedact(idkey, field, module, validations, query = 'update') {
   if (field instanceof Object) {
-    return function(selection) {
-      selection.append('span')
-        .attr('type', 'custom')
-        .attr('key', field.key)
-        .call(field.call);
-    };
+    if (field.readonly) {
+      return function(selection) {
+        selection.append('span')
+          .attr('type', 'readonly')
+          .attr('key', field.key)
+          .text((c, j, n) =>
+            renderText(c[field.key]));
+      };
+    }
+    if (field.call instanceof Function) {
+      return function(selection) {
+        selection.append('span')
+          .attr('type', 'custom')
+          .attr('key', field.key)
+          .call(field.call);
+      };
+    }
+    return function(selection) { };
   }
   var key = field;
   var isBike = false;
@@ -316,6 +328,8 @@ function setupTable(config) {
         d3.select(this)
           .call(fields.find(d => d.key == this.getAttribute('key')).call);
       });
+      d3.select(m[i]).selectAll('span[type="readonly"]').text((c, j, n) =>
+        renderText(d[n[j].getAttribute('key')]))
     });
 
     // ENTER
