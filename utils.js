@@ -94,6 +94,14 @@ function defineSubmitHandler(validations, row, i, m) {
 }
 
 function setupRedact(idkey, field, module, validations, query = 'update') {
+  if (field instanceof Object) {
+    return function(selection) {
+      selection.append('span')
+        .attr('type', 'custom')
+        .attr('key', field.key)
+        .call(field.call);
+    };
+  }
   var key = field;
   var isBike = false;
   var bike;
@@ -112,6 +120,7 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
           this._onblur = bike.onblur;
         }
       })
+      .attr('type', 'redactable')
       .attr('key', key)
       .attr('keyshow', show)
       .on('click', d => {
@@ -291,7 +300,7 @@ function setupTable(config) {
 
     // UPDATE
     trs.each((d, i, m) => {
-      d3.select(m[i]).selectAll('span').text((c, j, n) =>
+      d3.select(m[i]).selectAll('span[type="redactable"]').text((c, j, n) =>
         renderText(d[n[j].getAttribute('keyshow')]));
       d3.select(m[i]).selectAll('input[name="value"]')
         .attr('value', (c, j, n) => d[n[j].getAttribute('key')])
@@ -303,6 +312,10 @@ function setupTable(config) {
       actions.forEach(action =>
         d3.select(m[i]).select(action.select).call(action.setup));
       extraRows.forEach(extraRow => d3.select(m[i]).each(extraRow.update));
+      d3.select(m[i]).selectAll('span[type="custom"]').each(function(c) {
+        d3.select(this)
+          .call(fields.find(d => d.key == this.getAttribute('key')).call);
+      });
     });
 
     // ENTER
