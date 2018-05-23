@@ -203,7 +203,9 @@ function setupTable(config) {
 
   function clear(entry) {
     storage.length = 0;
-    Object.assign(newEntry, entry);
+    if (entry instanceof Object) {
+      Object.assign(newEntry, entry);
+    }
     render();
   }
 
