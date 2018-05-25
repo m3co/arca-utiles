@@ -112,7 +112,12 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
           .call(field.call);
       };
     }
-    return function(selection) { };
+    if (field.hasOwnProperty('show') ||
+        field.hasOwnProperty('type') ||
+        field.hasOwnProperty('name')) {
+    } else {
+      return function(selection) { };
+    }
   }
   var key = field;
   var isBike = false;
