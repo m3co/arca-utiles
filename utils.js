@@ -256,12 +256,16 @@ function setupTable(config) {
     }
   }
 
-  function doselect(row) {
+  var doselect = config.doselect || function doselect(row) {
     var found = storage.find(d => d[idkey] == row[idkey]);
     if (!found) {
       storage.push(row);
       bounceRender();
     }
+  };
+  if (config.doselect instanceof Function) {
+    config.doselect.storage = storage;
+    config.doselect.bounceRender = bounceRender;
   }
 
   function doinsert(row) {
