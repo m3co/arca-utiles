@@ -362,4 +362,5 @@ function setupTable(config) {
 }
 
 window.setupTable = setupTable;
+window.setupRedacts = setupRedacts;
 })();
