@@ -57,13 +57,17 @@
         clearTimeout(lastSTO);
       }
       lastSTO = setTimeout(() => {
-        client.emit('data', {
+        var req = {
           query: 'search',
           combo: e.target.getAttribute('list'),
           module: this.config.module,
           key: this.config.key,
           value: e.target.value
-        });
+        };
+        if (this.config.filter instanceof Object) {
+          req.filter = this.config.filter;
+        }
+        client.emit('data', req);
       }, 200);
     }
 
