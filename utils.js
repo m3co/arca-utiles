@@ -66,17 +66,35 @@ function defineSubmitHandler(validations, row, i, m) {
   if (fd.query == 'update') {
     var keys = Object.keys(row)
       .filter(d => !excludeFields.includes(d) && row[d]);
-    client.emit('data', {
-      id: fd.id,
-      idkey: fd.idkey,
-      key: keys,
-      value: keys.map(key => row[key]),
-      query: fd.query,
-      module: fd.module
-    });
+    if (fd.insertInsteadOfUpdate === 'false') {
+      client.emit('data', {
+        id: fd.id,
+        idkey: fd.idkey,
+        key: keys,
+        value: keys.map(key => row[key]),
+        query: fd.query,
+        module: fd.module
+      });
+    } else {
+      client.emit('data', {
+        row: keys.concat([fd.idkey]).reduce((acc, d) => {
+          if (row[d] != null && row[d] != undefined) {
+            acc[d] = row[d];
+          }
+          return acc;
+        }, {}),
+        query: 'insert',
+        module: fd.module
+      });
+    }
   } else {
     client.emit('data', {
-      row: Object.assign({}, row),
+      row: keys.reduce((acc, d) => {
+        if (row[d] != null && row[d] != undefined) {
+          acc[d] = row[d];
+        }
+        return acc;
+      }, {}),
       query: fd.query,
       module: fd.module
     });
@@ -93,7 +111,8 @@ function defineSubmitHandler(validations, row, i, m) {
   }
 }
 
-function setupRedact(idkey, field, module, validations, query = 'update') {
+function setupRedact(idkey, field, module, validations,
+    insertInsteadOfUpdate=false, query = 'update') {
   if (field instanceof Object) {
     if (field.readonly) {
       return function(selection) {
@@ -181,11 +200,16 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
     form.append('input')
       .attr('name', 'module')
       .attr('value', module)
-      .attr('type', 'hidden');
+      .attr('type', 'hidden');;
 
     form.append('input')
       .attr('name', 'query')
       .attr('value', query)
+      .attr('type', 'hidden');
+
+    form.append('input')
+      .attr('name', 'insertInsteadOfUpdate')
+      .attr('value', insertInsteadOfUpdate)
       .attr('type', 'hidden');
 
     form.append('input')
@@ -206,11 +230,11 @@ function setupRedact(idkey, field, module, validations, query = 'update') {
   }
 }
 
-function setupRedacts(module, idkey, fields, tr, query='update') {
+function setupRedacts(module, idkey, fields, tr, insertInsteadOfUpdate=false, query='update') {
   fields.forEach(field => {
     tr.append('td')
       .call(setupRedact(idkey, field, module,
-        fields[Symbol.for('validations')], query));
+        fields[Symbol.for('validations')], insertInsteadOfUpdate, query));
   });
 }
 
@@ -225,6 +249,7 @@ function setupTable(config) {
   var extraRows = config.extraRows || [];
   var filter = config.filter || {};
   var preventNewEntry = config.preventNewEntry || false;
+  var insertInsteadOfUpdate = config.insertInsteadOfUpdate || false;
 
   var storage = [];
 
@@ -346,7 +371,7 @@ function setupTable(config) {
     if (filter.key) {
       tr.attr(filter.key.toLowerCase(), filter.value);
     }
-    setupRedacts(module, idkey, fields, tr);
+    setupRedacts(module, idkey, fields, tr, insertInsteadOfUpdate);
     actions.forEach(action =>
       tr.append('td').append('button').call(action.setup));
     extraRows.forEach(extraRow => tr.each(extraRow.enter));
