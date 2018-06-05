@@ -21,14 +21,14 @@ class SelectorContractorHTML extends HTMLElement {
     }
 
     function render() {
+      var ContractorId = window.location.search.match(/ContractorId=(\d+)/);
       d3.select('#ContractorId')
         .selectAll('option')
         .data(contractors)
         .enter()
         .append('option').attr('value', d => d.id).attr('label', d => d.fullname);
 
-      d3.select(`#ContractorId option[value="${
-        location.search.match(/\d+$/).toString()}"]`).attr('selected', '');
+      d3.select(`#ContractorId option[value="${ContractorId ? ContractorId[1].toString() : ''}"]`).attr('selected', '');
     }
 
     this.render = render;
@@ -40,7 +40,7 @@ class SelectorContractorHTML extends HTMLElement {
       <select id="ContractorId">
       </select>
     `;
-    var ContractorId = window.location.search.match(/\?ContractorId=(\d+)$/);
+    var ContractorId = window.location.search.match(/ContractorId=(\d+)/);
     this.querySelector('select#ContractorId').value = ContractorId ? ContractorId[1] : 1;
 
     this.querySelector('select#ContractorId').addEventListener('change', e => {
