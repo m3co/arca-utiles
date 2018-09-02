@@ -40,11 +40,14 @@ class SelectorProjectHTML extends HTMLElement {
       <select id="ProjectId">
       </select>
     `;
-    var ProjectId = window.location.search.match(/ProjectId=(\d+)/);
+    var urlparams = new URLSearchParams(window.location.search);
+    var ProjectId = urlparams.get('ProjectId');
     this.querySelector('select#ProjectId').value = ProjectId ? ProjectId[1] : 1;
 
     this.querySelector('select#ProjectId').addEventListener('change', e => {
-      window.location.search = `ProjectId=${e.target.value}`;
+      var urlparams = new URLSearchParams(window.location.search);
+      urlparams.set('ProjectId', e.target.value);
+      window.location.search = urlparams.toString();
     });
   }
 
