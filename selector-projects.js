@@ -7,7 +7,6 @@ class SelectorProjectHTML extends HTMLElement {
     var projects = [];
     var lastSTO;
     function doselect(row) {
-      console.log(row);
       var found = projects.find(d => d.id == row.id);
       if (!found) {
         projects.push(row);
