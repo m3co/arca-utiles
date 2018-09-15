@@ -233,6 +233,7 @@ function setupRedact(idkey, field, module, validations,
 function setupRedacts(module, idkey, fields, tr, insertInsteadOfUpdate=false, query='update') {
   fields.forEach(field => {
     tr.append('td')
+      .attr('key', field instanceof Object ? field.key : field)
       .call(setupRedact(idkey, field, module,
         fields[Symbol.for('validations')], insertInsteadOfUpdate, query));
   });
