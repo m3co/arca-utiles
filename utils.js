@@ -20,7 +20,7 @@ function defineBlurHandler(row, i, m) {
   span.hidden = false;
 }
 
-function defineSubmitHandler(validations, row, i, m) {
+function defineSubmitHandler(validations, readonlyFields, row, i, m) {
   var e = d3.event;
   e.preventDefault();
 
@@ -65,7 +65,7 @@ function defineSubmitHandler(validations, row, i, m) {
 
   if (fd.query == 'update') {
     var keys = Object.keys(row)
-      .filter(d => !excludeFields.includes(d) && row[d]);
+      .filter(d => !(readonlyFields.includes(d) || excludeFields.includes(d)) && row[d]);
     if (fd.insertInsteadOfUpdate === 'false') {
       client.emit('data', {
         id: fd.id,
@@ -101,7 +101,7 @@ function defineSubmitHandler(validations, row, i, m) {
     var defaultrow = row[Symbol.for('defaultrow')];
     var tr = form.closest('.new-row');
     Object.keys(defaultrow)
-      .forEach(key => {
+     .forEach(key => {
         row[key] = defaultrow[key];
         d3.select(tr).select(`input[name="value"][key="${key}"]`)
           .attr('value', defaultrow[key]);
@@ -112,7 +112,7 @@ function defineSubmitHandler(validations, row, i, m) {
 }
 
 function setupRedact(idkey, field, module, validations,
-    insertInsteadOfUpdate=false, query = 'update') {
+    insertInsteadOfUpdate=false, query = 'update', readonlyFields = []) {
   if (field instanceof Object) {
     if (field.readonly) {
       return function(selection) {
@@ -139,6 +139,9 @@ function setupRedact(idkey, field, module, validations,
     }
   }
   var key = field;
+  var idkey_ = field.idkey || idkey;
+  var reflectidkey_ = field.reflectidkey || idkey_;
+  var module_ = field.module || module;
   var isBike = false;
   var bike;
   var show = field;
@@ -171,7 +174,7 @@ function setupRedact(idkey, field, module, validations,
 
     var form = selection.append('form')
       .attr('hidden', '')
-      .on('submit', defineSubmitHandler.bind(null, validations));
+      .on('submit', defineSubmitHandler.bind(null, validations, readonlyFields));
 
     var valueinput;
     if (isBike && bike instanceof Object) {
@@ -199,7 +202,7 @@ function setupRedact(idkey, field, module, validations,
 
     form.append('input')
       .attr('name', 'module')
-      .attr('value', module)
+      .attr('value', module_)
       .attr('type', 'hidden');;
 
     form.append('input')
@@ -214,7 +217,7 @@ function setupRedact(idkey, field, module, validations,
 
     form.append('input')
       .attr('name', 'idkey')
-      .attr('value', idkey)
+      .attr('value', idkey_)
       .attr('type', 'hidden');
 
     form.append('input')
@@ -224,8 +227,8 @@ function setupRedact(idkey, field, module, validations,
 
     form.append('input')
       .attr('name', 'id')
-      .attr('idkey', idkey)
-      .attr('value', d => d[idkey])
+      .attr('idkey', idkey_)
+      .attr('value', d => d[reflectidkey_])
       .attr('type', 'hidden');
   }
 }
@@ -235,7 +238,8 @@ function setupRedacts(module, idkey, fields, tr, insertInsteadOfUpdate=false, qu
     tr.append('td')
       .attr('key', field instanceof Object ? field.key : field)
       .call(setupRedact(idkey, field, module,
-        fields[Symbol.for('validations')], insertInsteadOfUpdate, query));
+        fields[Symbol.for('validations')], insertInsteadOfUpdate, query,
+        [].concat(fields[Symbol.for('readonlyfields')], field.excludeFields || [])));
   });
 }
 
@@ -306,6 +310,8 @@ function setupTable(config) {
     }
   }
 
+  fields[Symbol.for('readonlyfields')] = fields.filter(field => field.readonly)
+    .map(field => field.key);
   fields[Symbol.for('validations')] = validations;
   var newEntry = (() => {
     var row = Object.assign({}, defaultRow);
@@ -355,7 +361,11 @@ function setupTable(config) {
       d3.select(m[i]).selectAll('input[name="id"]')
         .attr('value', (c, j, n) => d[n[j].getAttribute('idkey')]);
       d3.select(m[i]).selectAll('form')
-        .on('submit', defineSubmitHandler.bind(null, validations));
+        .on('submit', defineSubmitHandler.bind(
+          null,
+          fields[Symbol.for('validations')],
+          fields[Symbol.for('readonlyfields')]
+        ));
       actions.forEach(action =>
         d3.select(m[i]).select(action.select).call(action.setup));
       extraRows.forEach(extraRow => d3.select(m[i]).each(extraRow.update));
